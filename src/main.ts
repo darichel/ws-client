@@ -3,7 +3,10 @@ import './style.css'
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
-    <h1>Websocket - Client!</h1>
+    <h2>Websocket - Client!</h2>
+    <input id="jwtToken" placeholder="JWT Token" />
+    <button id="connectBtn">Connect</button>
+    <br/>
     <span id="server-status">Offline</span>
 
     <ul id="clients-ul">
@@ -20,6 +23,22 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   </div>
 `
 
-connectToServer();
+const jwtToken = document.querySelector<HTMLInputElement>('#jwtToken')!;
+const connectBtn = document.querySelector<HTMLButtonElement>('#connectBtn')!;
+
+connectBtn.addEventListener('click', () => {
+  let token = jwtToken.value.trim();
+  if (token.length <= 0) {
+    alert('Please enter a JWT token');
+    return;
+  }
+
+  connectToServer(token);
+})
+
+
+
+
+//connectToServer();
 
 
