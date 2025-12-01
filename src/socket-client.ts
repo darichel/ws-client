@@ -3,13 +3,11 @@ import { Manager, Socket } from "socket.io-client";
 export const connectToServer = (token: string) => {
   const manager = new Manager("http://localhost:3000/socket.io/socket.io.js", {
     extraHeaders: {
-      authentication: `Bearer ${token}`,
-    }
+      authentication: token,
+    },
   });
 
-
-
-  const socket = manager.socket("/")
+  const socket = manager.socket("/");
 
   addListener(socket);
 };
@@ -20,7 +18,7 @@ const addListener = (socket: Socket) => {
   const messageForm = document.querySelector<HTMLFormElement>("#message-form")!;
   const messageInput =
     document.querySelector<HTMLInputElement>("#message-input")!;
-  let messagesUl = document.querySelector<HTMLUListElement>("#messages-ul")!; 
+  let messagesUl = document.querySelector<HTMLUListElement>("#messages-ul")!;
 
   socket.on("connect", () => {
     serverStatuslabel.innerHTML = "Online";
@@ -50,14 +48,19 @@ const addListener = (socket: Socket) => {
     messageInput.value = "";
   });
 
-  socket.on('message-from-server', (payload: { fullname: string; message: string }) => {
-    const newMessage = `
+  socket.on(
+    "message-from-server",
+    (payload: { fullName: string; message: string }) => {
+      console.log(payload);
+      const newMessage = `
       <li>
-        <strong>${payload.fullname}:</strong>
-        <span>${payload.message}</span>
+        <strong>${payload.fullName}</strong></span> say: </span>
+        <span>'${payload.message}'</span>
       </li>
-    `;  
-    messagesUl.innerHTML += newMessage;
-  });
-
-}
+    `;
+      const li = document.createElement("li");
+      li.innerHTML = newMessage;
+      messagesUl.append(li);
+    }
+  );
+};
