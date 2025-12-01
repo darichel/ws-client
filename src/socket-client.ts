@@ -11,6 +11,8 @@ export const connectToServer = () => {
 const addListener = (socket: Socket) => {
   const serverStatuslabel = document.querySelector("#server-status")!;
   const clientsUl = document.querySelector("#clients-ul")!;
+ const messageForm = document.querySelector<HTMLFormElement>("#message-form")!;
+ const messageInput = document.querySelector<HTMLInputElement>("#message-input")!;
 
   socket.on("connect", () => {
     serverStatuslabel.innerHTML = "Online";
@@ -20,13 +22,24 @@ const addListener = (socket: Socket) => {
     serverStatuslabel.innerHTML = "Offline";
   });
 
-  //TODO: Listener for "clients-updated"
   socket.on("clients-updated", (clients: string[]) => {
-    clientsUl.innerHTML = "";
-    clients.forEach((clientId) => {
-      const li = document.createElement("li");
-      li.innerHTML = clientId;
-      clientsUl.appendChild(li);
-    });
+    let clientHtml = '';
+    clients.forEach( clientId => {
+      clientHtml += `<li>${ clientId }</li>`;
+    })
+    clientsUl.innerHTML = clientHtml;
   });
+
+  messageForm.addEventListener('submit',  (event) => {
+    event.preventDefault();
+    if(messageInput.value.trim().length <= 0) return;
+
+    //console.log({ id: 'Yo', message: messageInput.value });
+
+    socket.emit('message-front-client', { id: 'Yo', message: messageInput.value });
+
+    messageInput.value = '';
+  })
+
+
 };
